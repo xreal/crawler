@@ -67,6 +67,8 @@ class Crawler
     protected array $allowedMimeTypes = [];
 
     protected string $defaultScheme = 'http';
+    
+    protected string $proxyPrefix = '';
 
     protected static array $defaultClientOptions = [
         RequestOptions::COOKIES => true,
@@ -173,6 +175,13 @@ class Crawler
     {
         $this->maximumDepth = $maximumDepth;
 
+        return $this;
+    }
+    
+    public function setProxyPrefix($url)
+    {
+        $this->proxyPrefix = $url;
+        
         return $this;
     }
 
@@ -506,7 +515,7 @@ class Crawler
             $this->currentUrlCount++;
             $this->crawlQueue->markAsProcessed($crawlUrl);
 
-            yield $crawlUrl->getId() => new Request('GET', $crawlUrl->url);
+            yield $crawlUrl->getId() => new Request('GET', $this->proxyPrefix.$crawlUrl->url);
         }
     }
 
